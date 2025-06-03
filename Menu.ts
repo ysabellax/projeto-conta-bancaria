@@ -1,10 +1,19 @@
 import leia from "readline-sync";
 import { colors } from './src/util/Colors';
+import { Conta } from './src/model/Conta';
 
 
 export function main() {
 
     let opcao: number;
+
+    const conta: Conta = new Conta(1, 123, 1, "Ysabella", 10000);
+    conta.visualizar();
+    conta.sacar(10500);
+    conta.visualizar();
+    conta.depositar(5000);
+    conta.visualizar();
+    keyPress();
 
     while (true) {
         console.log(colors.bg.black, colors.fg.magenta,
@@ -98,17 +107,17 @@ export function main() {
     }
 }
 
-export function sobre(): void {
+function sobre(): void {
         console.log("\n*****************************************************");
         console.log("Projeto Desenvolvido por: ");
         console.log("Ysabella Santos - ysabella3909@gmail.com");
-        console.log("github.com/conteudoGeneration");
+        console.log("https://github.com/ysabellax/projeto-conta-bancaria.git");
         console.log("*****************************************************");
 }
 
 function keyPress(): void {
     console.log(colors.reset, "");
-    console.log("\nPressione enter para continuar...");
+    console.log("\nPressione enter para continuar...\n");
     leia.prompt();
 }
 
