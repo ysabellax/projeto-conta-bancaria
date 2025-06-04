@@ -1,22 +1,32 @@
 import leia from "readline-sync";
 import { colors } from './src/util/Colors';
-import { Conta } from './src/model/Conta';
-
+import { ContaCorrente } from './src/model/ContaCorrente';
+import { ContaPoupanca } from './src/model/ContaPoupanca';
 
 export function main() {
 
     let opcao: number;
 
-    const conta: Conta = new Conta(1, 123, 1, "Ysabella", 10000);
-    conta.visualizar();
-    conta.sacar(10500);
-    conta.visualizar();
-    conta.depositar(5000);
-    conta.visualizar();
-    keyPress();
+
+    const contacorrente: ContaCorrente = new ContaCorrente(2, 123, 1, "Ysabella", 15000, 1000);
+    contacorrente.visualizar();
+    contacorrente.sacar(2000);
+    contacorrente.visualizar();
+    contacorrente.depositar(1000);
+    contacorrente.visualizar();
+
+    const contapoupanca: ContaPoupanca = new ContaPoupanca(3, 123, 2, "Ysabella", 1000, 10);
+    contapoupanca.visualizar();
+    contapoupanca.sacar(200);
+    contapoupanca.visualizar();
+    contapoupanca.depositar(1000);
+    contapoupanca.visualizar();
+
+
+
 
     while (true) {
-        console.log(colors.bg.black, colors.fg.magenta,
+        console.log(colors.fg.magenta + 
                     "*****************************************************");
         console.log("                                                     ");
         console.log("                BANCO DO BRAZIL COM Z                ");
@@ -108,11 +118,11 @@ export function main() {
 }
 
 function sobre(): void {
-        console.log("\n*****************************************************");
+        console.log("*****************************************************");
         console.log("Projeto Desenvolvido por: ");
         console.log("Ysabella Santos - ysabella3909@gmail.com");
         console.log("https://github.com/ysabellax/projeto-conta-bancaria.git");
-        console.log("*****************************************************");
+        console.log("*****************************************************\n");
 }
 
 function keyPress(): void {
