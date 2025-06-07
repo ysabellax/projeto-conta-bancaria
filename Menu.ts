@@ -2,28 +2,31 @@ import leia from "readline-sync";
 import { colors } from './src/util/Colors';
 import { ContaCorrente } from './src/model/ContaCorrente';
 import { ContaPoupanca } from './src/model/ContaPoupanca';
+import { ContaController } from "./src/controller/ContaController";
 
 export function main() {
 
-    let opcao: number;
+    let contas:ContaController = new ContaController();
 
+    let opcao, numero, agencia, tipo, saldo, limite, aniversario, valor, numeroDestino: number;
+    let titular: string;
+    const tipoContas = ["Conta Corrente", "Conta Poupanca"];
 
-    const contacorrente: ContaCorrente = new ContaCorrente(2, 123, 1, "Ysabella", 15000, 1000);
-    contacorrente.visualizar();
-    contacorrente.sacar(2000);
-    contacorrente.visualizar();
-    contacorrente.depositar(1000);
-    contacorrente.visualizar();
+    console.log("\nCriar Contas\n");
 
-    const contapoupanca: ContaPoupanca = new ContaPoupanca(3, 123, 2, "Ysabella", 1000, 10);
-    contapoupanca.visualizar();
-    contapoupanca.sacar(200);
-    contapoupanca.visualizar();
-    contapoupanca.depositar(1000);
-    contapoupanca.visualizar();
+    let cc1: ContaCorrente = new ContaCorrente(contas.gerarNumero(), 123, 1, "João da Silva", 1000, 100.0);
+    contas.cadastrar(cc1);
 
+    let cc2: ContaCorrente = new ContaCorrente(contas.gerarNumero(), 124, 1, "Maria da Silva", 2000, 100.0);
+    contas.cadastrar(cc2);
 
+    let cp1: ContaPoupanca = new ContaPoupanca(contas.gerarNumero(), 125, 2, "Mariana dos Santos", 4000, 12);
+    contas.cadastrar(cp1);
 
+    let cp2: ContaPoupanca = new ContaPoupanca(contas.gerarNumero(), 125, 2, "Juliana Ramos", 8000, 15);
+    contas.cadastrar(cp2);
+
+    contas.listarTodas();
 
     while (true) {
         console.log(colors.fg.magenta + 
@@ -60,20 +63,49 @@ export function main() {
 
         switch (opcao) {
             case 1:
-                console.log(colors.fg.whitestrong,
-                    "\n\nCriar Conta\n\n", colors.reset);
+                console.log(colors.fg.whitestrong,"\n\nCriar Conta\n\n", colors.reset);
+
+                console.log("Digite o Número da agência: ");
+                agencia = leia.questionInt("");
+
+                console.log("Digite o Nome do Titular da Conta: ");
+                titular = leia.question("");
+
+                console.log("Digite o Tipo da Conta: ");
+                tipo = leia.keyInSelect(tipoContas, "", {cancel: false}) + 1;
+
+                console.log("Digite o Saldo da conta (R$): ");
+                saldo = leia.questionFloat("");
+
+                switch (tipo) {
+                    case 1:
+                        console.log("Digite o limite da Conta (R$): ");
+                        limite = leia.questionFloat("");
+                        contas.cadastrar(
+                            new ContaCorrente(contas.gerarNumero(), agencia, tipo, titular, saldo, limite));
+                        break;
+                    case 2:
+                        console.log("Digite o Dia do aniversário da Conta Poupança: ");
+                        aniversario = leia.questionInt("");
+                        contas.cadastrar(new ContaPoupanca(contas.gerarNumero(), agencia, tipo, titular, saldo, aniversario));
+                        break;
+                }
 
                 keyPress()
                 break
             case 2:
-                console.log(colors.fg.whitestrong,
-                    "\n\nListar todas as Contas\n\n", colors.reset);
+                console.log(colors.fg.whitestrong,"\n\nListar todas as Contas\n\n", colors.reset);
+                    contas.listarTodas();
 
                 keyPress()
                 break
             case 3:
                 console.log(colors.fg.whitestrong,
                     "\n\nConsultar dados da Conta - por número\n\n", colors.reset);
+
+                console.log("Digite o número da conta: ");
+                numero = leia.questionInt("");
+                contas.procurarPorNumero(numero);
                 
                 keyPress()
                 break
@@ -81,11 +113,50 @@ export function main() {
                 console.log(colors.fg.whitestrong,
                     "\n\nAtualizar dados da Conta\n\n", colors.reset);
 
+                console.log("Digite o número da Conta: ");
+                numero = leia.questionInt("");
+
+                let conta = contas.buscarNoArray(numero);
+
+                if (conta != null) {
+
+                    console.log("Digite o Número da agência: ");
+                    agencia = leia.questionInt("");
+
+                    console.log("Digite o Nome do Titular da conta: ");
+                    titular = leia.question("");
+
+                    tipo = conta.tipo;
+
+                    console.log("Digite o Saldo da conta (R$): ");
+                    saldo = leia.questionFloat("");
+
+                    switch (tipo) {
+                        case 1 :
+                            console.log("Digite o Limite da Conta (R$): ");
+                            limite = leia.questionFloat("");
+                            contas.atualizar(
+                                new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
+                            break;
+                        case 2:
+                            console.log("Digite o Dia do aniversário da Conta Poupança: ");
+                            aniversario = leia.questionInt("");
+                            contas.atualizar(new ContaPoupanca(numero, agencia, tipo, titular, saldo, aniversario));
+                            break;
+                    }
+                }else {
+                    console.log(colors.fg.magenta, "\nA Conta numero: " + numero + " não foi encontrada!", colors.reset);
+                }
+
                 keyPress()
                 break
             case 5:
                 console.log(colors.fg.whitestrong,
                     "\n\nApagar uma Conta\n\n", colors.reset);
+
+                console.log("Digite o número da Conta: ");
+                numero = leia.questionInt("");
+                contas.deletar(numero);
 
                 keyPress()
                 break
@@ -93,17 +164,44 @@ export function main() {
                 console.log(colors.fg.whitestrong,
                     "\n\nSaque\n\n", colors.reset);
 
+                console.log("Digite o número da Conta: ");
+                numero = leia.questionInt("");
+
+                console.log("\nDigite o valor do Saque (R$): ");
+                valor = leia.questionFloat("");
+
+                contas.sacar(numero, valor);
+
                 keyPress()
                 break
             case 7:
                 console.log(colors.fg.whitestrong,
                     "\n\nDepósito\n\n", colors.reset);
 
+                console.log("Digite o numero da Conta: ");
+                numero = leia.questionInt("");
+
+                console.log("\nDigite o valor do Depósito (R$): ");
+                valor = leia.questionFloat("");
+
+                contas.depositar(numero, valor);
+
                 keyPress()
                 break
             case 8:
                 console.log(colors.fg.whitestrong,
                     "\n\nTransferência entre Contas\n\n", colors.reset);
+
+                console.log("Digite o numero da Conta de Origem: ");
+                numero = leia.questionInt("");
+
+                console.log("Digite o numero da Conta de Destino: ");
+                numeroDestino = leia.questionInt("");
+
+                console.log("Digite o valor do Depósito (R$): ");
+                valor = leia.questionInt("");
+
+                contas.transferir(numero, numeroDestino, valor);
 
                 keyPress()
                 break

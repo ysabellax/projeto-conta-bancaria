@@ -1,3 +1,5 @@
+import { colors } from "../util/Colors";
+
 export abstract class Conta {
 
     private _numero: number;
@@ -82,9 +84,9 @@ export abstract class Conta {
                 break;
         }
 
-        console.log("\n\n*****************************************************");
+        console.log(colors.fg.magenta,"\n\n*****************************************************", colors.reset);
         console.log("Dados da Conta:");
-        console.log("*****************************************************");
+        console.log(colors.fg.magenta + "*****************************************************", colors.reset);
         console.log("Numero da Conta: " + this._numero);
         console.log("Agência: " + this._agencia);
         console.log("Tipo da Conta: " + tipo);
